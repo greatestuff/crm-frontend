@@ -2,13 +2,14 @@ import React from "react"
 import './App.css';
 import { Entry } from "./page/entry/Entry.page"
 import { DefaultLayout } from "./layout/DefaultLayout";
+import { Dashboard } from "./page/dashboard/Dashboard.page";
 
 function App() {
   return (
     <div className="App">
       {/*<Entry />*/}
       <DefaultLayout>
-        //DashBoard
+        <Dashboard/>
       </DefaultLayout>
     </div>
   );
