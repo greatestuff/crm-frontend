@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch } from "react-redux";
+import { fetchAllTickets } from "./ticketsAction";
 import {Container, Row, Col, Button} from "react-bootstrap"
 import { PageBreadcrumb } from '../../components/breadcrumb/PageBreadcrumb.comp'
 import { SearchForm } from '../../components/search-form/SearchForm.comp'
@@ -10,18 +12,14 @@ import {Link} from "react-router-dom";
 
 export const TicketLists = () => {
 
+    const dispatch = useDispatch()
     const [str, setStr] = useState("");
     const [dispTickets, setDispTickets] = useState(tickets);
 
-    useEffect(() => {}, [str,dispTickets])
-    
+    useEffect(() => {
+        dispatch(fetchAllTickets())
+    }, [str,dispatch])
 
-    const handleOnChange = e => 
-    {
-        const {value} = e.target
-        setStr(value)
-        searchTickets(value)
-    }
 
     const searchTickets = (sttr) =>
     {
@@ -43,13 +41,13 @@ export const TicketLists = () => {
                 <Link  as={Link} to="/add-ticket"><Button variant="info">Add New Ticket</Button ></Link>
             </Col>
             <Col style={{ display: 'flex', justifyContent: 'flex-end' }} className="text-right">
-                <SearchForm handleOnChange={handleOnChange} str={str} />
+                <SearchForm  />
             </Col>
         </Row>
         <hr/> 
         <Row>
             <Col>
-                <TicketTable tickets={dispTickets} /> 
+                <TicketTable /> 
             </Col>
         </Row>
 
