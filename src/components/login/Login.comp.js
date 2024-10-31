@@ -1,9 +1,71 @@
-import React from "react"
-import {Container, Row, Col, Form, Button} from 'react-bootstrap'
+import React, {useState} from "react"
+import {Container, Row, Col, Form, Button, Spinner, Alert} from 'react-bootstrap'
 import './Login.comp.css'
 import PropTypes from 'prop-types'; 
+import { useDispatch, useSelector } from "react-redux";
+import { loginPending, loginSuccess, loginFail } from './loginSlice'; 
+import { userLogin } from "../../../src/api/userApi";
 
-export const LoginForm = ({handleOnChange ,handleOnLoginSubmit, formSwitcher, email , password}) => {
+import { useNavigate } from "react-router-dom";
+import { getUserProfile } from "../../page/dashboard/userActions";
+
+export const LoginForm = ({ formSwitcher }) => {
+
+    const {isLoading, isAuth, error} =useSelector(state => state.login)
+    
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const navigate = useNavigate()
+
+    const dispatch = useDispatch()
+  
+    const handleOnChange = (e) => 
+        {
+            const {name, value} = e.target
+  
+            switch(name)
+            {
+              case "email" : 
+                setEmail(value)
+                break;
+              case "password" : 
+                setPassword(value)
+                break;
+            }
+            
+        }
+  
+    const handleOnLoginSubmit = async(e) =>
+    {
+      e.preventDefault();
+      if(!email || !password)
+      {
+        return alert("Please fill up all the Form !!")
+      }
+  
+      //TODO : Submit info to server
+      dispatch(loginPending())
+
+      try {
+        const isAuth = await userLogin({email, password})
+        if(isAuth.status === "error")
+        {
+            console.log(isAuth)
+            return dispatch(loginFail(isAuth.message))
+        }
+
+        dispatch(loginSuccess())
+        dispatch(getUserProfile())
+        navigate("/dashboard")
+
+        console.log(isAuth)
+      } catch (error) {
+        dispatch(loginFail())
+      }
+  
+    }
+
 
   return (
     <Container>
@@ -11,6 +73,7 @@ export const LoginForm = ({handleOnChange ,handleOnLoginSubmit, formSwitcher, em
             <Col>
                 <h1 className="text-center text-info">Client Login</h1>
                 <hr />
+                {error && <Alert variant="danger" >{error}</Alert>}
                 <Form autoComplete="off" onSubmit={handleOnLoginSubmit}>
                     <Form.Group>
                         <Form.Label>Email Adress</Form.Label>
@@ -23,6 +86,8 @@ export const LoginForm = ({handleOnChange ,handleOnLoginSubmit, formSwitcher, em
                     </Form.Group>  
 
                     <Button className="submitbtn" type="submit" >Login</Button>
+                    {isLoading && <Spinner variant="primary" animation="border" />}
+
                 </Form>
                 <hr />
             </Col>
@@ -38,9 +103,5 @@ export const LoginForm = ({handleOnChange ,handleOnLoginSubmit, formSwitcher, em
 
 LoginForm.propTypes = 
 {
-    handleOnChange : PropTypes.func.isRequired,
-    handleOnLoginSubmit : PropTypes.func.isRequired,
-    formSwitcher : PropTypes.func.isRequired,
-    email : PropTypes.string.isRequired,
-    password : PropTypes.string.isRequired
+    formSwitcher : PropTypes.func.isRequired
 }

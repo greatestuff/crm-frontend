@@ -6,10 +6,11 @@ import {useNavigate} from "react-router-dom"
 //import { LinkContainer } from 'react-router-bootstrap';
 
 export const Header = () => {
-  const history = useNavigate()
+  const navigate = useNavigate()
   const logMeOut = () =>
   {
-    history.push("/")
+    sessionStorage.removeItem('accessJWT')
+    navigate.push("/")
   }
 
   return (
