@@ -10,7 +10,7 @@ export const Header = () => {
   const logMeOut = () =>
   {
     sessionStorage.removeItem('accessJWT')
-    navigate.push("/")
+    navigate("/")
   }
 
   return (

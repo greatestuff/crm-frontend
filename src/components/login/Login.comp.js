@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
 import {Container, Row, Col, Form, Button, Spinner, Alert} from 'react-bootstrap'
 import './Login.comp.css'
 import PropTypes from 'prop-types'; 
@@ -12,13 +12,21 @@ import { getUserProfile } from "../../page/dashboard/userActions";
 export const LoginForm = ({ formSwitcher }) => {
 
     const {isLoading, isAuth, error} =useSelector(state => state.login)
-    
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-    const navigate = useNavigate()
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+    useEffect(() => { 
+      if(sessionStorage.getItem('sessionJWT'))
+      {
+        navigate("/dashboard")
+      }
+    }, [navigate])
+    
+    
+    const [email, setEmail] = useState('e@e.com');
+    const [password, setPassword] = useState('password1');
+
   
     const handleOnChange = (e) => 
         {
